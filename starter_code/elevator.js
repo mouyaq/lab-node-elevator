@@ -21,8 +21,17 @@ class Elevator {
   }
   _passengersEnter() {}
   _passengersLeave() {}
-  floorUp() {}
-  floorDown() {}
+
+  floorUp() {
+    if (this.floor < 10) {
+      this.floor++;
+    }
+  }
+  floorDown() {
+    if (this.floor > 0) {
+      this.floor--;
+    }
+  }
   call() {}
   log() {
     console.log(`Direction: ${this.direction} | Floor: ${this.floor}`);
