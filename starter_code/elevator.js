@@ -3,6 +3,8 @@ class Elevator {
     this.floor = 0;
     this.MAXFLOOR = 10;
     this.requests = [];
+    this.waitingList = [];
+    this.passengers = [];
     this.direction = 'up';
     this.interval;
   }
@@ -19,7 +21,10 @@ class Elevator {
   update() {
     this.log();
   }
-  _passengersEnter() {}
+  _passengersEnter(person) {
+    this.passengers.push(person.name);
+    this.waitingList.splice(this.waitingList.indexOf(person), 1);
+  }
   _passengersLeave() {}
 
   floorUp() {
@@ -32,7 +37,10 @@ class Elevator {
       this.floor--;
     }
   }
-  call() {}
+  call(person) {
+    this.requests.push(person);
+    this.waitingList.push(person);
+  }
   log() {
     console.log(`Direction: ${this.direction} | Floor: ${this.floor}`);
   }

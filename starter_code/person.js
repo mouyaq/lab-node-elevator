@@ -1,6 +1,5 @@
 class Person {
-  constructor(name, originFloor, destinationFloor){
-  }
+  constructor(name, originFloor, destinationFloor) {}
 }
 
 module.exports = Person;
