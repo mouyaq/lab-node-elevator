@@ -1,6 +1,6 @@
 class Elevator {
   constructor() {
-    this.floor = 0;
+    this.floor = -1;
     this.MAXFLOOR = 10;
     this.requests = [];
     this.waitingList = [];
@@ -11,6 +11,19 @@ class Elevator {
 
   start() {
     this.interval = setInterval(() => {
+      if (this.floor < 10 && this.direction === 'up') {
+        this.floorUp();
+      } else if (this.floor > 0 && this.direction === 'down') {
+        this.floorDown();
+      } else {
+        if (this.floor == 10 && this.direction == 'up') {
+          this.direction = 'down';
+          this.floorDown();
+        } else {
+          this.direction = 'up';
+          this.floorUp();
+        }
+      }
       if (this.requests.length > 0) {
         this.requests.map(request => {
           if (request == this.floor) {
@@ -27,25 +40,15 @@ class Elevator {
           }
         });
       }
-      if (this.floor < 10 && this.direction === 'up') {
-        this.floorUp();
-      } else if (this.floor > 0 && this.direction === 'down') {
-        this.floorDown();
-      } else {
-        if (this.floor == 10 && this.direction == 'up') {
-          this.direction = 'down';
-          this.floorDown();
-        } else {
-          this.direction = 'up';
-          this.floorUp();
-        }
-      }
+      this.stop();
       this.update();
     }, 1000);
   }
 
   stop() {
-    if (this.requests.length == 0) clearInterval(this.interval);
+    if (this.waitingList.length == 0 && this.passengers.length == 0) {
+      clearInterval(this.interval);
+    }
   }
   update() {
     this.log();
@@ -54,6 +57,7 @@ class Elevator {
     this.passengers.push(person);
     this.waitingList.splice(this.waitingList.indexOf(person), 1);
     this.requests.push(person.destinationFloor);
+
     console.log(`${person.name} has enter the elevator`);
   }
   _passengersLeave(person) {
