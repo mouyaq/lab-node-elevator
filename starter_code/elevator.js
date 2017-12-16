@@ -1,29 +1,31 @@
 class Elevator {
   constructor() {
-    this.floor = -1;
+    this.floor = 0;
     this.MAXFLOOR = 10;
     this.requests = [];
     this.waitingList = [];
     this.passengers = [];
     this.direction = 'up';
     this.interval;
+    this.intervals = [];
   }
 
   start() {
     this.interval = setInterval(() => {
       if (this.floor < 10 && this.direction === 'up') {
         this.floorUp();
-      } else if (this.floor > 0 && this.direction === 'down') {
+      } 
+      else if (this.floor > 0 && this.direction === 'down') {
         this.floorDown();
-      } else {
+      } 
+      else {
         if (this.floor == 10 && this.direction == 'up') {
           this.direction = 'down';
-          this.floorDown();
         } else {
           this.direction = 'up';
-          this.floorUp();
         }
       }
+      this.update();
       if (this.requests.length > 0) {
         this.requests.map(request => {
           if (request == this.floor) {
@@ -40,38 +42,50 @@ class Elevator {
           }
         });
       }
-      this.stop();
-      this.update();
     }, 1000);
+    this.intervals.push(this.interval);
   }
 
   stop() {
-    if (this.waitingList.length == 0 && this.passengers.length == 0) {
-      clearInterval(this.interval);
-    }
+    clearInterval(this.intervals[0]);
+    this.intervals.splice(0,1);
   }
   update() {
     this.log();
   }
   _passengersEnter(person) {
-    this.passengers.push(person);
-    this.waitingList.splice(this.waitingList.indexOf(person), 1);
-    this.requests.push(person.destinationFloor);
+    if(this.waitingList.indexOf(person) != -1) {
+      this.passengers.push(person);
+      this.waitingList.splice(this.waitingList.indexOf(person), 1);
+      this.requests.push(person.destinationFloor);
+  
+      console.log(`${person.name} has enter the elevator`);
+    }
+    else {
+      console.log(`There is nobody waiting for`);
+    }
 
-    console.log(`${person.name} has enter the elevator`);
   }
   _passengersLeave(person) {
     this.passengers.splice(this.passengers.indexOf(person), 1);
     console.log(`${person.name} has left the elevator`);
+    this.stop();
   }
 
   floorUp() {
-    this.floor++;
+    if(this.floor < this.MAXFLOOR) {
+      this.floor++;
+    }
   }
+
   floorDown() {
-    this.floor--;
+    if(this.floor > 0) {
+      this.floor--;
+    }
   }
+  
   call(person) {
+    this.start();
     console.log(
       `${person.name} call to elevator at floor ${person.originFloor}`
     );
